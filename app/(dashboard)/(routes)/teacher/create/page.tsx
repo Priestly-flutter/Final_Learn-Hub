@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
     title: z.string().min(1,{
@@ -46,7 +47,7 @@ const CreatePage = () => {
             const response = await axios.post("/api/course",values);//study this line of code
             router.push('teacher/courses/${response.data.id}')
         } catch{
-            console.log("Something went wrong, contact the developer")
+            toast.error("Something went wrong please kindly contact the developer");
         }
     }
 
