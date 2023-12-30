@@ -24,3 +24,4 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ## DATABASE
     This porject runs on a local database, this will be set up after development on a server computer.
+    Password for database is : developer237JAPTECH
