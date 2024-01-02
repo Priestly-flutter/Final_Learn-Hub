@@ -21,6 +21,9 @@ model Course {
   categoryId String?
   category Category? @relation(fields: [categoryId], references: [id])
 
+  priceId String?
+  price Price? @relation(fields: [priceId],references: [id])
+
   typeId String?
   type Type? @relation(fields: [typeId],references: [id])
 
@@ -31,6 +34,7 @@ model Course {
 
   @@index([categoryId])
   @@index([typeId])
+  @@index([priceId])
 }
 
 model Type{
@@ -59,4 +63,10 @@ model Category {
   name String @unique
   courses Course[]
 
+}
+
+model Price{
+  id String @id @default(uuid())
+  cost String @unique
+  courses Course[]
 }

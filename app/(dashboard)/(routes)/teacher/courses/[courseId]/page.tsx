@@ -1,11 +1,12 @@
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
-import { LayoutDashboard } from "lucide-react";
+import { CircleDollarSign, LayoutDashboard, ListChecks } from "lucide-react";
 import { redirect } from "next/navigation";
 import { TitleForm } from "./_components/title-form";
 import { DescriptionForm } from "./_components/description-form";
 import { ImageForm } from "./_components/image-form";
+import { CategoryForm } from "./_components/category-form";
 
 const CourseIdPage = async ({
     params
@@ -28,6 +29,13 @@ const CourseIdPage = async ({
     if (!course){
         return redirect("/");
     }
+
+    const categories = await db.category.findMany({
+        orderBy: {
+            name: "asc"
+        },
+    });
+
 
     const requireFields = [
         course.title,
@@ -77,10 +85,40 @@ const CourseIdPage = async ({
                         initialData = {course}
                         courseId = {course.id}
                     />
+                    <CategoryForm 
+                        initialData = {course}
+                        courseId = {course.id}
+                        options= {categories.map((category) => ({
+                            label: category.name,
+                            value: category.id,
+                        }))}
+                    />
+                </div>
+                {/* will add the payement feature that will pop upasking the user to pay for a course, well this will be done once since the 
+                    user will choose between 2 options to pay for, either he choose to get the 12 months for 100$ or 1 month for 25$  */}
+                <div className=" space-y-6">
+                    <div>
+                        <div className="flex item-center gap-x-2">
+                            <IconBadge icon={ListChecks} />
+                            <h2 className="text-xl">
+                                Course chapters
+                            </h2>
+                        </div>
+                        <div>
+                            TODO: Chapters
+                        </div>
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-x-2">
+                            <IconBadge icon={CircleDollarSign} />
+                            <h2>
+                                Set course price category to sell your course
+                            </h2>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
      );
 }
  
