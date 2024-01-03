@@ -20,10 +20,11 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
-import { Course } from "@prisma/client";
+
+import { course } from "@prisma/client";
 
 interface DescriptionFormProps {
-    initialData:Course;
+    initialData:course;
     courseId: string;
 }
 

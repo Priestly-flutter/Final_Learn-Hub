@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,63 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Course {
-  id String @id @default(uuid())
-  userId String
-  title String @db.Text
-  description String? @db.Text
-  imageUrl String? @db.Text
-  isPublished Boolean @default(false)
-
-  categoryId String?
-  category Category? @relation(fields: [categoryId], references: [id])
-
-  priceId String?
-  price Price? @relation(fields: [priceId],references: [id])
-
-  typeId String?
-  type Type? @relation(fields: [typeId],references: [id])
-
-  attachments Attachment[]
-
+model attachment {
+  id        String   @id
+  name      String
+  url       String   @db.Text
+  courseId  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime
+  course    course   @relation(fields: [courseId], references: [id], onDelete: Cascade, map: "Attachment_courseId_fkey")
 
-  @@index([categoryId])
-  @@index([typeId])
-  @@index([priceId])
+  @@index([courseId], map: "Attachment_courseId_idx")
 }
 
-model Type{
-  id String @id @default(uuid())
-  format String @db.Text
-  courses Course[]
+model category {
+  id     String   @id
+  name   String   @unique(map: "Category_name_key")
+  course course[]
 }
 
-model Attachment{
-  id String @id @default(uuid())
-  name String
-  url String @db.Text
+model course {
+  id          String       @id
+  userId      String
+  title       String       @db.Text
+  description String?      @db.Text
+  imageUrl    String?      @db.Text
+  isPublished Boolean      @default(false)
+  categoryId  String?
+  typeId      String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  priceId     String?
+  attachment  attachment[]
+  category    category?    @relation(fields: [categoryId], references: [id], map: "Course_categoryId_fkey")
+  price       price?       @relation(fields: [priceId], references: [id], map: "Course_priceId_fkey")
+  type        type?        @relation(fields: [typeId], references: [id], map: "Course_typeId_fkey")
 
-  courseId String
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([courseId])
+  @@index([categoryId], map: "Course_categoryId_idx")
+  @@index([priceId], map: "Course_priceId_idx")
+  @@index([typeId], map: "Course_typeId_idx")
 }
 
-
-model Category {
-  id String @id @default(uuid())
-  name String @unique
-  courses Course[]
-
+model price {
+  id     String   @id
+  cost   String   @unique(map: "Price_cost_key")
+  course course[]
 }
 
-model Price{
-  id String @id @default(uuid())
-  cost String @unique
-  courses Course[]
+model type {
+  id     String   @id
+  format String   @db.Text
+  course course[]
 }

@@ -7,6 +7,7 @@ import { TitleForm } from "./_components/title-form";
 import { DescriptionForm } from "./_components/description-form";
 import { ImageForm } from "./_components/image-form";
 import { CategoryForm } from "./_components/category-form";
+import { PriceForm } from "./_components/price-form";
 
 const CourseIdPage = async ({
     params
@@ -36,6 +37,11 @@ const CourseIdPage = async ({
         },
     });
 
+    const prices = await db.price.findMany ({
+        orderBy: {
+            cost: "asc"
+        }
+    })
 
     const requireFields = [
         course.title,
@@ -115,6 +121,14 @@ const CourseIdPage = async ({
                                 Set course price category to sell your course
                             </h2>
                         </div>
+                        <PriceForm
+                            initialData={course}
+                            courseId ={course.id}
+                            options= {prices.map((price) => ({
+                                label: price.cost,
+                                value: price.id,
+                            }))}
+                        />
                     </div>
                 </div>
             </div>

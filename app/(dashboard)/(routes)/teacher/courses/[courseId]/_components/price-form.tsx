@@ -22,21 +22,21 @@ import { cn } from "@/lib/utils";
 import { course } from "@prisma/client";
 import { Combobox } from "@/components/ui/combobox";
 
-interface CategoryFormProps {
+interface PriceFormProps {
     initialData:course;
     courseId: string;
     options : {label: string; value:string; }[];
 };
 
 const formSchema = z.object({
-    categoryId: z.string().min(1),
+    priceId: z.string().min(1),
 });
 
-export const CategoryForm = ({
+export const PriceForm = ({
     initialData,
     courseId,
     options,
-}: CategoryFormProps) => {
+}: PriceFormProps) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => setIsEditing((current) => !current);
@@ -46,7 +46,7 @@ export const CategoryForm = ({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues:{
-            categoryId: initialData?.categoryId || " "
+            priceId: initialData?.priceId || " "
         }, 
     });
 
@@ -70,28 +70,28 @@ export const CategoryForm = ({
     }
     //line 58 is a fragment
 
-    const selectedOption = options.find((option) => option.value === initialData.categoryId);
+    const selectedOption = options.find((option) => option.value === initialData.priceId);
 
     return(
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medius flex items-center justify-between">
-                Course Category
+                Select Course Price Category
                 <Button onClick={toggleEdit} variant="ghost">
                     {isEditing ? (
                         <>Cancel</>
                     ) : (
                         <>
                             <Pencil className="h-4 w-4 mr-2"/>
-                            Set category
+                            Set Category
                         </>
                     )}
                 </Button>
             </div>
             {!isEditing && (
                 <p className={cn(
-                    "text-sm mt-2", !initialData.categoryId && "text-slate-500 italic"
+                    "text-sm mt-2", !initialData.priceId && "text-slate-500 italic"
                 )}>
-                    {selectedOption?.label || "No category"}
+                    {selectedOption?.label || "No price"}
                 </p>
             )}
             {isEditing && (
@@ -102,7 +102,7 @@ export const CategoryForm = ({
                     >
                         <FormField 
                             control={form.control}
-                            name="categoryId"
+                            name="priceId"
                             render={({ field }) =>(
                                 <FormItem>
                                     <FormControl>
@@ -129,3 +129,70 @@ export const CategoryForm = ({
         </div>
     )
 }
+
+/*
+    generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model attachment {
+  id        String   @id
+  name      String
+  url       String   @db.Text
+  courseId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  course    course   @relation(fields: [courseId], references: [id], onDelete: Cascade, map: "Attachment_courseId_fkey")
+
+  @@index([courseId], map: "Attachment_courseId_idx")
+}
+
+model category {
+  id     String   @id
+  name   String   @unique(map: "Category_name_key")
+  course course[]
+}
+
+model course {
+  id          String       @id
+  userId      String
+  title       String       @db.Text
+  description String?      @db.Text
+  imageUrl    String?      @db.Text
+  isPublished Boolean      @default(false)
+  categoryId  String?
+  typeId      String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  priceId     String?
+  attachment  attachment[]
+  category    category?    @relation(fields: [categoryId], references: [id], map: "Course_categoryId_fkey")
+  price       price?       @relation(fields: [priceId], references: [id], map: "Course_priceId_fkey")
+  type        type?        @relation(fields: [typeId], references: [id], map: "Course_typeId_fkey")
+
+  @@index([categoryId], map: "Course_categoryId_idx")
+  @@index([priceId], map: "Course_priceId_idx")
+  @@index([typeId], map: "Course_typeId_idx")
+}
+
+model price {
+  id     String   @id
+  cost   String   @unique(map: "Price_cost_key")
+  course course[]
+}
+
+model type {
+  id     String   @id
+  format String   @db.Text
+  course course[]
+}
+
+
+DATABASE_URL="mysql://root:developer237JAPTECH@localhost:3306/lh?"
+*/
+
