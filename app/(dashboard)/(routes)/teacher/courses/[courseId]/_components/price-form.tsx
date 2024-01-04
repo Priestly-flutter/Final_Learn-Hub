@@ -107,7 +107,7 @@ export const PriceForm = ({
                                 <FormItem>
                                     <FormControl>
                                         <Combobox 
-                                            options={{...options}}
+                                            options={...options}
                                             {...field}
                                         />
                                     </FormControl>

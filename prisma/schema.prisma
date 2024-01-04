@@ -20,7 +20,7 @@ model attachment {
 }
 
 model category {
-  id     String   @id
+  id     String   @id @default(uuid())
   name   String   @unique(map: "Category_name_key")
   course course[]
 }
@@ -48,13 +48,15 @@ model course {
 }
 
 model price {
-  id     String   @id
+  id     String   @id @default(uuid())
   cost   String   @unique(map: "Price_cost_key")
+  period String
   course course[]
 }
 
 model type {
   id     String   @id
   format String   @db.Text
+  size String @db.VarChar(20)
   course course[]
 }

@@ -29,3 +29,8 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 
     check line 52 and 53 in teacher/create/page.tsx
+
+
+
+
+## Error at this stage occurs at the level of sending the course image

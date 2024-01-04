@@ -1,3 +1,5 @@
+
+
 const { PrismaClient } = require("@prisma/client");
 
 const db = new PrismaClient();
@@ -6,11 +8,13 @@ async function main() {
     try{
         await db.price.createMany({
             data: [
-                {cost: "$25",
-                 id:"1"
+                {
+                    cost: "$25",
+                    period: "30",
                 },
-                {cost:"$100",
-                 id:"2"
+                {
+                    cost: "$100",
+                    period: "365",
                 }
             ]
         })
