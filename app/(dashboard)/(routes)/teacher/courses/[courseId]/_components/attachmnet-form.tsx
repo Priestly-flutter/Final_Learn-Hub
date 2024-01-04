@@ -5,28 +5,25 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { course } from "@prisma/client";
-import Image from "next/image";
+import { attachment, course } from "@prisma/client";
 import { FileUpload } from "@/components/file-upload";
 
-interface ImageFormProps {
-    initialData:course
+interface AttachmentFormProps {
+    initialData:course & { attachment: attachment[] };
     courseId: string;
 }
 
 const formSchema = z.object({
-    imageUrl: z.string().min(1,{
-        message: "Image is required",
-    }),
+    url: z.string().min(1),
 });
 
-export const ImageForm = ({
+export const AttachmentForm = ({
     initialData,
     courseId
-}: ImageFormProps) => {
+}: AttachmentFormProps) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => setIsEditing((current) => !current);
@@ -41,7 +38,7 @@ export const ImageForm = ({
 
     const onSubmit = async(values: z.infer <typeof formSchema>) => {
         try{
-            await axios.patch('/api/courses/'+CI,values);
+            await axios.post('/api/courses/'+CI+'/attachment',values);
             toast.success("course updated");
             toggleEdit();
             router.refresh()
@@ -54,55 +51,41 @@ export const ImageForm = ({
     return(
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medius flex items-center justify-between">
-                Course Image
+                Course Attachments
                 <Button onClick={toggleEdit} variant="ghost">
                     {isEditing && (
                         <>Cancel</>
                     )}  
                     
-                    {!isEditing && !initialData.imageUrl && (
+                    {!isEditing && (
                         <>
                             <PlusCircle className="h-4 w-4 mr-2"/>
-                            Add an image
-                        </>
-                    )}
-                    {!isEditing && initialData.imageUrl && (
-                        <>
-                            <Pencil className="h-4 w-4 mr-2"/>
-                            Edit Image
+                            Add a file
                         </>
                     )}
                 </Button>
             </div>
             {!isEditing && (
-                !initialData.imageUrl ? (
-                    <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
-                        <ImageIcon className="h-10 w-10 text-slate-500"/>
-                    </div>
-                ) : (
-                    <div className="relative aspect-video mt-2">
-                        <Image 
-                            alt="Upload"
-                            fill
-                            className="object-cover rounded-md"
-                            src={initialData.imageUrl}
-                        />
-                    </div>
-                )
+                <>
+                    {initialData.attachment.length === 0 && (
+                        <p className="text-sm mt-2 text-slate-500 italic">
+                            No attachment Yet
+                        </p>
+                    )}
+                </>
             )}
             {isEditing && (
                 <div>
-                    
                     <FileUpload 
-                        endpoint="courseImage"
+                        endpoint="courseAttachment"
                         onChange={(url) => {
                             if (url) {
-                                onSubmit({ imageUrl: url });
+                                onSubmit({ url: url });
                             }
                         }}
                     />
                     <div className="text-xs text-muted-foreground mt-4"> 
-                        16:9 aspect ratio recommended
+                        Add anything a student might need to complete the course
                     </div>
                 </div>
             )}
